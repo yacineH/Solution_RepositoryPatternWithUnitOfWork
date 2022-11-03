@@ -29,7 +29,7 @@ namespace Solution_RepositoryPatternWithUnitOfWork.EF.Repositories
             return _context.Set<T>().ToList();
         }
 
-        public T Find(Expression<Func<T, bool>> match, string[] includes = null)
+        public T Find(Expression<Func<T, bool>> criteria, string[] includes = null)
         {
             IQueryable<T> query = _context.Set<T>();
 
@@ -42,7 +42,7 @@ namespace Solution_RepositoryPatternWithUnitOfWork.EF.Repositories
 
             }
 
-            return query.SingleOrDefault(match);
+            return query.SingleOrDefault(criteria);
         }
 
         public async Task<T> GetByIdAsync(int id)
@@ -50,7 +50,7 @@ namespace Solution_RepositoryPatternWithUnitOfWork.EF.Repositories
             return await _context.Set<T>().FindAsync(id);
         }
 
-        public IEnumerable<T> FindAll(Expression<Func<T, bool>> match, string[] includes = null)
+        public IEnumerable<T> FindAll(Expression<Func<T, bool>> criteria, string[] includes = null)
         {
             IQueryable<T> query = _context.Set<T>();
 
@@ -63,17 +63,17 @@ namespace Solution_RepositoryPatternWithUnitOfWork.EF.Repositories
 
             }
 
-            return query.Where(match).ToList();
+            return query.Where(criteria).ToList();
         }
 
-        public IEnumerable<T> FindAll(Expression<Func<T, bool>> match, int take, int skip)
+        public IEnumerable<T> FindAll(Expression<Func<T, bool>> criteria, int take, int skip)
         {
-            return _context.Set<T>().Where(match).Skip(skip).Take(take).ToList();
+            return _context.Set<T>().Where(criteria).Skip(skip).Take(take).ToList();
         }
 
-        public IEnumerable<T> FindAll(Expression<Func<T, bool>> match, int? take, int? skip, Expression<Func<T, object>> orderBy = null, string OrderByDirection = OrderBy.Ascending)
+        public IEnumerable<T> FindAll(Expression<Func<T, bool>> criteria, int? take, int? skip, Expression<Func<T, object>> orderBy = null, string OrderByDirection = OrderBy.Ascending)
         {
-            IQueryable<T> query = _context.Set<T>().Where(match);
+            IQueryable<T> query = _context.Set<T>().Where(criteria);
 
             if (take.HasValue)
                 query = query.Take(take.Value);
@@ -95,8 +95,6 @@ namespace Solution_RepositoryPatternWithUnitOfWork.EF.Repositories
         public T Add(T entity)
         {
             _context.Set<T>().Add(entity);
-            _context.SaveChanges();
-
             return entity;
         }
 
@@ -107,5 +105,39 @@ namespace Solution_RepositoryPatternWithUnitOfWork.EF.Repositories
 
             return entities;
         }
+
+        public T Update(T entity)
+        {
+            _context.Set<T>().Update(entity);
+
+            return entity;
+        }
+
+        public void Delete(T entity)
+        {
+            _context.Set<T>().Remove(entity);
+        }
+
+        public void DeleteRange(IEnumerable<T> entities)
+        {
+            _context.Set<T>().RemoveRange(entities);
+        }
+
+        public void Attach(T entity)
+        {
+            _context.Set<T>().Attach(entity);
+        }
+
+        public int Count()
+        {
+            return _context.Set<T>().Count();
+        }
+
+        public int Count(Expression<Func<T, bool>> criteria)
+        {
+            return _context.Set<T>().Count(criteria);
+
+        }
+
     }
 }

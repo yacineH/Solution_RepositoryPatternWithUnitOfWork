@@ -10,49 +10,51 @@ namespace Solution_RepositoryPatternWithUnitOfWork.API.Controllers
     [ApiController]
     public class BooksController : ControllerBase
     {
-        private readonly IBaseRepository<Book> _booksRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public BooksController(IBaseRepository<Book> booksRepository)
+        public BooksController(IUnitOfWork unitOfWork)
         {
-            _booksRepository = booksRepository;
+            _unitOfWork = unitOfWork;
         }
 
         [HttpGet]
         public ActionResult GetById()
         {
-            return Ok(_booksRepository.GetById(1));
+            return Ok(_unitOfWork.Books.GetById(1));
         }
 
         [HttpGet("GetAll")]
         public ActionResult GetAll()
         {
-            return Ok(_booksRepository.GetAll());
+            return Ok(_unitOfWork.Books.GetAll());
         }
 
 
         [HttpGet("GetByName")]
         public ActionResult GetByName()
         {
-            return Ok(_booksRepository.Find(b => b.Title == "Book 1", new[] { "Author" }));
+            return Ok(_unitOfWork.Books.Find(b => b.Title == "Book 1", new[] { "Author" }));
         }
 
         [HttpGet("GetAllWithAuthors")]
         public ActionResult GetAllWithAuthors()
         {
-            return Ok(_booksRepository.FindAll(b => b.Title.Contains("Book 1"), new[] { "Author" }));
+            return Ok(_unitOfWork.Books.FindAll(b => b.Title.Contains("Book 1"), new[] { "Author" }));
         }
 
 
         [HttpGet("GetOrdered")]
         public ActionResult GetOrdered()
         {
-            return Ok(_booksRepository.FindAll(b => b.Title.Contains("Book"), null, null, b => b.Id, OrderBy.Descending));
+            return Ok(_unitOfWork.Books.FindAll(b => b.Title.Contains("Book"), null, null, b => b.Id, OrderBy.Descending));
         }
 
         [HttpPost("AddOne")]
         public ActionResult AddOne()
         {
-            return Ok(_booksRepository.Add(new Book { Title = "Test 3", AuthorId = 1 }));
+            var book = _unitOfWork.Books.Add(new Book { Title = "Test 3", AuthorId = 1 });
+            _unitOfWork.Complete();
+            return Ok(book);
         }
 
     }

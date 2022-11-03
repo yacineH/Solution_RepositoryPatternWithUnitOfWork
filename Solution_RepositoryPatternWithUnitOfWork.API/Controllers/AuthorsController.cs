@@ -10,23 +10,23 @@ namespace Solution_RepositoryPatternWithUnitOfWork.API.Controllers
     [ApiController]
     public class AuthorsController : ControllerBase
     {
-        private readonly IBaseRepository<Author> _authorsRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public AuthorsController(IBaseRepository<Author> authorsRepository)
+        public AuthorsController(IUnitOfWork unitOfWork)
         {
-            _authorsRepository = authorsRepository;
+            _unitOfWork = unitOfWork;
         }
 
         [HttpGet]
         public ActionResult GetById()
         {
-            return Ok(_authorsRepository.GetById(1));
+            return Ok(_unitOfWork.Authors.GetById(1));
         }
 
         [HttpGet("GetByIdAsync")]
         public async Task<IActionResult> GetByIdAsync()
         {
-            return Ok(await _authorsRepository.GetByIdAsync(1));
+            return Ok(await _unitOfWork.Authors.GetByIdAsync(1));
         }
     }
 }

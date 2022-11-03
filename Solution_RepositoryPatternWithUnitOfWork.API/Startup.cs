@@ -38,8 +38,8 @@ namespace Solution_RepositoryPatternWithUnitOfWork.API
                                      b => b.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName));
             });
 
-            services.AddTransient(typeof(IBaseRepository<>), typeof(BaseRepository<>));
-
+            //services.AddTransient(typeof(IBaseRepository<>), typeof(BaseRepository<>));
+            services.AddTransient<IUnitOfWork, UnitOfWork>();
 
             services.AddSwaggerGen(c =>
             {
